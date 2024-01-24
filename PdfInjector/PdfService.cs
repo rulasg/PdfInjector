@@ -1,24 +1,36 @@
-using System.IO;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
-
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Layout.Properties;
+using iText.Kernel.Font;
+using iText.Kernel.Geom;
+using iText.IO.Font.Constants;
 
 public class PdfService
 {
     public void InjectNameIntoPdf(Student student, string pdfPath, string pdfPathOutput)
     {
-        string tempFile = Path.GetTempFileName();
-        using (PdfReader reader = new PdfReader(pdfPath))
+        string tempFile = System.IO.Path.GetTempFileName();
+
+        using (PdfWriter writer = new PdfWriter(tempFile))
         {
-            using (PdfStamper stamper = new PdfStamper(reader, new FileStream(tempFile, FileMode.Create)))
+            using (PdfDocument pdfDoc = new PdfDocument(new PdfReader(pdfPath), writer))
             {
-                PdfContentByte canvas = stamper.GetOverContent(1);
-                ColumnText.ShowTextAligned(
-                    canvas,
-                    Element.ALIGN_MIDDLE,
-                    new Phrase(student.Name),
-                    36, 540, 0
-                );
+                Document doc = new Document(pdfDoc);
+
+                PdfFont font = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+                Paragraph para = new Paragraph(student.Name)
+                    .SetFont(font)
+                    .SetFontSize(50)
+                    .SetTextAlignment(TextAlignment.CENTER);
+
+                Rectangle pageSize = pdfDoc.GetPage(1).GetPageSize();
+                float x = pageSize.GetWidth() / 2;
+                float y = pageSize.GetHeight() / 2;
+
+                doc.ShowTextAligned(para, x, y, 1, TextAlignment.CENTER, VerticalAlignment.MIDDLE, 0);
+
+                doc.Close();
             }
         }
 

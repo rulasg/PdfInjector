@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using iTextSharp.text.pdf;
 
 namespace PdfInjector;
 
@@ -21,11 +20,11 @@ public class Program
         var fullPdfFilePath = Path.GetFullPath(pdfFilePath);
         Console.WriteLine($"Full path of pdfFilePath: {fullPdfFilePath}");
 
-        // Validar studentName y pdfFilePath
+        // Validate studentName y pdfFilePath
         if (studentName == null) { Console.WriteLine("Error: Student name cannot be null."); return; }
         if (pdfFilePath == null || !File.Exists(pdfFilePath)) { Console.WriteLine("Error: PDF file path not found."); return; }
 
-        // Crear pdfPathOutput
+        // Create pdfPathOutput
         var pdfPathOutput = Path.Combine(Path.GetDirectoryName(pdfFilePath), $"{Path.GetFileNameWithoutExtension(pdfFilePath)}_{studentName}{Path.GetExtension(pdfFilePath)}");
 
         var student = new Student { Name = studentName };
