@@ -1,32 +1,44 @@
 ﻿using System;
-using iTextSharp.text;
+using System.IO;
 using iTextSharp.text.pdf;
 
-class Program
+namespace PdfInjector;
+
+public class Program
+{
+    public static void Main(string[] args)
     {
-        static void Main(string[] args)
+        if (args.Length < 2)
         {
-            if (args.Length < 2)
-            {
-                Console.WriteLine("Usage: my-dotnet-app <student name> <pdf file path>");
-                return;
-            }
+            Console.WriteLine("Usage: my-dotnet-app <student name> <pdf file path>");
+            return;
+        }
 
-            var studentName = args[0];
-            var pdfFilePath = args[1];
+        var studentName = args[0];
+        var pdfFilePath = args[1];
 
-            var student = new Student { Name = studentName };
-            var pdfService = new PdfService();
+        // Display full path of pdfFilePath
+        var fullPdfFilePath = Path.GetFullPath(pdfFilePath);
+        Console.WriteLine($"Full path of pdfFilePath: {fullPdfFilePath}");
 
-            try
-            {
-                pdfService.InjectNameIntoPdf(student, pdfFilePath);
-                Console.WriteLine("Name injected successfully into the PDF.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
+        // Validar studentName y pdfFilePath
+        if (studentName == null) { Console.WriteLine("Error: Student name cannot be null."); return; }
+        if (pdfFilePath == null || !File.Exists(pdfFilePath)) { Console.WriteLine("Error: PDF file path not found."); return; }
+
+        // Crear pdfPathOutput
+        var pdfPathOutput = Path.Combine(Path.GetDirectoryName(pdfFilePath), $"{Path.GetFileNameWithoutExtension(pdfFilePath)}_{studentName}{Path.GetExtension(pdfFilePath)}");
+
+        var student = new Student { Name = studentName };
+        var pdfService = new PdfService();
+
+        try
+        {
+            pdfService.InjectNameIntoPdf(student, pdfFilePath, pdfPathOutput);
+            Console.WriteLine("Name injected successfully into the PDF.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
         }
     }
 }

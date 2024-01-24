@@ -2,9 +2,10 @@ using System.IO;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 
+
 public class PdfService
 {
-    public void InjectNameIntoPdf(Student student, string pdfPath)
+    public void InjectNameIntoPdf(Student student, string pdfPath, string pdfPathOutput)
     {
         string tempFile = Path.GetTempFileName();
         using (PdfReader reader = new PdfReader(pdfPath))
@@ -20,7 +21,12 @@ public class PdfService
                 );
             }
         }
-        File.Delete(pdfPath);
-        File.Move(tempFile, pdfPath);
+
+        if (File.Exists(pdfPathOutput))
+        {
+            File.Delete(pdfPathOutput);
+        }
+
+        File.Move(tempFile, pdfPathOutput);
     }
 }

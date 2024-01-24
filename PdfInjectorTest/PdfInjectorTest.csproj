@@ -26,4 +26,10 @@
     <ProjectReference Include="..\PdfInjector\PdfInjector.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Pdftemplate.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
