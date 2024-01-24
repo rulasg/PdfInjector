@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PdfInjector", "PdfInjector\PdfInjector.csproj", "{19B49219-A60F-43B1-B3DD-7AB51C5CEC9E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PdfInjectorTest", "PdfInjectorTest\PdfInjectorTest.csproj", "{B800739E-CF2A-4612-91C2-8443B7BC4939}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{19B49219-A60F-43B1-B3DD-7AB51C5CEC9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19B49219-A60F-43B1-B3DD-7AB51C5CEC9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19B49219-A60F-43B1-B3DD-7AB51C5CEC9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B800739E-CF2A-4612-91C2-8443B7BC4939}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B800739E-CF2A-4612-91C2-8443B7BC4939}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B800739E-CF2A-4612-91C2-8443B7BC4939}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B800739E-CF2A-4612-91C2-8443B7BC4939}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
