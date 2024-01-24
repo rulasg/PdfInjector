@@ -1,6 +1,7 @@
 using System.IO;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Org.BouncyCastle.Crypto.Prng;
 
 
 public class PdfService
@@ -41,22 +42,39 @@ public class PdfService
 
     string InjectName2(Student student, string pdfPath)
     {
+        int fontSize = 30;
+        var TextColor1 = new BaseColor(64, 119, 142);
+        BaseFont bfName = BaseFont.CreateFont(BaseFont.TIMES_ITALIC, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+        BaseFont bfHandle = BaseFont.CreateFont(BaseFont.TIMES_ITALIC, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+
         string tempFile = Path.GetTempFileName();
 
         using (PdfReader reader = new PdfReader(pdfPath))
         {
             using (PdfStamper stamper = new PdfStamper(reader, new FileStream(tempFile, FileMode.Create)))
             {
-                PdfContentByte canvas = stamper.GetOverContent(1);
-                BaseFont bf = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-                canvas.SetFontAndSize(bf, 50);
-                canvas.BeginText();
-
                 Rectangle pageSize = reader.GetPageSize(1);
+                //Name
                 float x = pageSize.Width / 2;
                 float y = pageSize.Height / 2;
 
+                PdfContentByte canvas = stamper.GetOverContent(1);
+                canvas.BeginText();
+
+                //Name
+                canvas.SetFontAndSize(bfName, fontSize);
+                canvas.SetColorFill(TextColor1);
                 canvas.ShowTextAligned(PdfContentByte.ALIGN_CENTER, student.Name, x, y, 0);
+
+                //Handle
+                if(student.Handle != null)
+                {
+                    y -= fontSize;
+                    canvas.SetFontAndSize(bfHandle, fontSize-10);
+                    canvas.SetColorFill(TextColor1);
+                    canvas.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "@" + student.Handle, x, y, 0);
+                }
+
                 canvas.EndText();
             }
         }

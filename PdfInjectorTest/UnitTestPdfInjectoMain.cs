@@ -10,12 +10,12 @@ namespace PdfInjectorTest
         public void TestPdfInjectorMain()
         {
 
-            var userName = "rulasg";
+            var userHandle = "ghHandle";
             var pdfName = "Pdftemplate";
 
             // Arrange
             // string[] args = new string[] { "userName", "/Users/rulasg/code/PdfInjector/README.pdf" };
-            string[] args = new string[] { userName, pdfName+".pdf" };
+            string[] args = new string[] { userHandle, pdfName+".pdf" };
             StringWriter stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
 
@@ -26,8 +26,8 @@ namespace PdfInjectorTest
             string output = stringWriter.ToString();
             Assert.Contains("Name injected successfully into the PDF.", output);
 
-            var outputFile = pdfName+"_"+userName+".pdf";
-
+            var userNameNormalized = userHandle.Replace(" ", "_");
+            var outputFile = pdfName+"_"+ userHandle+".pdf";
             Assert.True(File.Exists(outputFile));
         }
     }
