@@ -25,7 +25,7 @@ public class Program
         if (studentName == null) { Console.WriteLine("Error: Student name cannot be null."); return; }
         if (pdfFilePath == null || !File.Exists(pdfFilePath)) { Console.WriteLine("Error: PDF file path not found."); return; }
 
-        // Crear pdfPathOutput
+        // Create pdfPathOutput
         var pdfPathOutput = Path.Combine(Path.GetDirectoryName(pdfFilePath), $"{Path.GetFileNameWithoutExtension(pdfFilePath)}_{studentName}{Path.GetExtension(pdfFilePath)}");
 
         var student = new Student { Name = studentName };
