@@ -7,16 +7,28 @@ namespace PdfInjectorTest
     public class PdfInjectionMain_Solidify_Certiticate_V1
     {
         [Fact]
-        public void TestPdfInjectorMain()
+        public void Test_solidify_certificate_v1_SUCCESS()
         {
-
-            var userHandle = "ghHandle";
-            var pdfName = "Pdftemplate";
+        //    var pdftemplate= "/Users/rulasg/code/PdfInjector/README.pdf" ;
+           var pdftemplate= "solidify_certificate_v1.pdf";
+           var result = "result_V1.pdf";
 
             // Arrange
-            string[] args = new string[] { "rulasg", "/Users/rulasg/code/certificates/pdf/solidify_certificate_v1.pdf" };
-            // string[] args = new string[] { "userName", "/Users/rulasg/code/PdfInjector/README.pdf" };
-            //string[] args = new string[] { userHandle, pdfName+".pdf" };
+            string[] args = new string[] { 
+                "--pdftemplate",  pdftemplate,
+                "--pdfoutput", result,
+                "--studentname", "John Doe Smith",
+                "--studenthandle", "jdsmith",
+                "--studentcompany", "Contoso",
+                "--trainername", "Smart Guy",
+                "--trainerhandle", "smartg",
+                "--trainercompany", "Solidify",
+                "--coursename", "Training GitHub for Gurus and Geniuses",
+                "--coursedate", "December 2030",
+                "--id", "1234567890",
+                "--stampName", "solidify_training_v1"
+            };
+
             StringWriter stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
 
@@ -27,9 +39,7 @@ namespace PdfInjectorTest
             string output = stringWriter.ToString();
             Assert.Contains("Name injected successfully into the PDF.", output);
 
-            var userNameNormalized = userHandle.Replace(" ", "_");
-            var outputFile = pdfName+"_"+ userHandle+".pdf";
-            Assert.True(File.Exists(outputFile));
+            Assert.True(File.Exists(result));
         }
     }
 }

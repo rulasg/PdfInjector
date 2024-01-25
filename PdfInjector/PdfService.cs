@@ -9,14 +9,13 @@ public class PdfService
 {
     public void InjectNameIntoPdf( DocInfo docInfo, string pdfPath, string pdfPathOutput)
     {
-        string templateName = Path.GetFileNameWithoutExtension(pdfPath);
-        Console.WriteLine("Template PDF: " + templateName);
+        Console.WriteLine("StampName: " + docInfo.StampName);
 
         string tempFile;
 
-        switch (templateName)
+        switch (docInfo.StampName.ToLower())
         {
-            case "solidify_certificate_v1":
+            case "solidify_training_v1":
                 tempFile = InjectNameV1(docInfo, pdfPath);
                 break;
             default:
@@ -140,12 +139,12 @@ public class PdfService
 
                 // Trainer Name
                 stamp.FontSize = 16;
-                stamp.Text = "Raul gonzalez";
+                stamp.Text = docInfo.Trainer.Name;
                 stamp.Position = new Position(421.125f, 200f, 0f);
                 StampText(canvas,stamp);
 
                 // Handle Trainer
-                stamp.Text = "@rulasg25";
+                stamp.Text = $"@{docInfo.Trainer.Handle}";
                 stamp.Position.Y -= stamp.FontSize; // Second line
                 stamp.FontSize = 12;
                 StampText(canvas, stamp);

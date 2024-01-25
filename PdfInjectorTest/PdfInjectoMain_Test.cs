@@ -7,21 +7,35 @@ namespace PdfInjectorTest
     public class UnitTestPdfInjectoMain
     {
         [Fact]
-        public void TestPdfInjectorMain()
+        public void Test_Default_Stamp_success()
         {
 
-            var userHandle = "ghHandle";
-            var pdfName = "Pdftemplate";
-            var outputFile = pdfName+"_"+ userHandle+".pdf";
+           var pdftemplate= "Pdftemplate.pdf" ;
+           var result = "result_Default.pdf";
 
-            if (File.Exists(outputFile))
+            // Arrange
+            string[] args = new string[] { 
+                "--pdftemplate",  pdftemplate,
+                "--pdfoutput", result,
+                "--studentname", "John Doe Smith",
+                "--studenthandle", "jdsmith",
+                "--studentcompany", "Contoso",
+                "--trainername", "Smart Guy",
+                "--trainerhandle", "smartg",
+                "--trainercompany", "Solidify",
+                "--coursename", "Training GitHub for Gurus and Geniuses",
+                "--coursedate", "December 2030",
+                "--id", "1234567890",
+                "--stampName", "OtraCosa"
+            };
+
+
+            if (File.Exists(result))
             {
-                File.Delete(outputFile);
+                File.Delete(result);
             }
 
             // Arrange
-            // string[] args = new string[] { "userName", "/Users/rulasg/code/PdfInjector/README.pdf" };
-            string[] args = new string[] { userHandle, pdfName+".pdf" };
             StringWriter stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
 
@@ -32,8 +46,7 @@ namespace PdfInjectorTest
             string output = stringWriter.ToString();
             Assert.Contains("Name injected successfully into the PDF.", output);
 
-            var userNameNormalized = userHandle.Replace(" ", "_");
-            Assert.True(File.Exists(outputFile));
+            Assert.True(File.Exists(result));
         }
     }
 }
