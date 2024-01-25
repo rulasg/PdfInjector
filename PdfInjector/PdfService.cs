@@ -1,12 +1,13 @@
 using System.IO;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Crypto.Prng;
 
 
 public class PdfService
 {
-    public void InjectNameIntoPdf(Student student, string pdfPath, string pdfPathOutput)
+    public void InjectNameIntoPdf(Person student, string pdfPath, string pdfPathOutput)
     {
         string templateName = Path.GetFileNameWithoutExtension(pdfPath);
         Console.WriteLine("Template PDF: " + templateName);
@@ -31,7 +32,7 @@ public class PdfService
         File.Move(tempFile, pdfPathOutput);
     }
 
-    string InjectNameDefault(Student student, string pdfPath)
+    string InjectNameDefault(Person student, string pdfPath)
     {
         int fontSize = 30;
         var TextColor1 = new BaseColor(64, 119, 142);
@@ -73,11 +74,8 @@ public class PdfService
         return tempFile;
     }
 
-    string InjectNameV1(Student student, string pdfPath)
+    string InjectNameV1(Person student, string pdfPath)
     {
-        int fontSize = 30;
-        var TextColorGreen1 = new BaseColor(64, 119, 142);
-        var TextColorBlack = BaseColor.BLACK;
 
         BaseFont bfName = BaseFont.CreateFont(BaseFont.TIMES_ITALIC, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
         BaseFont bfBold = BaseFont.CreateFont(BaseFont.TIMES_BOLDITALIC, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
@@ -88,58 +86,57 @@ public class PdfService
         {
             using (PdfStamper stamper = new PdfStamper(reader, new FileStream(tempFile, FileMode.Create)))
             {
-                Rectangle pageSize = reader.GetPageSize(1);
-                //Name
-                float middle_X = pageSize.Width / 2;
-                float middle_y = pageSize.Height / 2;
+                // Get the size of the page
+                // Rectangle pageSize = reader.GetPageSize(1);
+                // float middle_X = pageSize.Width / 2;
+                // float middle_y = pageSize.Height / 2;
 
                 PdfContentByte canvas = stamper.GetOverContent(1);
                 canvas.BeginText();
 
-                //Name
-                var name_X = middle_X;
-                var name_Y = 400;
-                var name_fontSize = 35;
+                // Paragraph 1 Base Stamp
+                var stamp = new Stamp(
+                    "empty",
+                    new Position (297.75f,400,0),
+                    35, // Font Size
+                    BaseFont.TIMES_ITALIC,
+                    new BaseColor(64, 119, 142) // Green elegant
+                );
 
-                canvas.SetFontAndSize(bfName, name_fontSize);
-                canvas.SetColorFill(TextColorGreen1);
-                canvas.ShowTextAligned(PdfContentByte.ALIGN_CENTER, student.Name, name_X, name_Y, 0);
+                //Name
+                stamp.Text = student.Name;
+                StampText(canvas, stamp);
 
                 //Handle
                 if(student.Handle != null)
                 {
-                    var handle_Y = name_Y - fontSize;
-                    var handle_X = middle_X;
-                    var handle_fontSize = fontSize - 10;
-
-                    canvas.SetFontAndSize(bfName, handle_fontSize);
-                    canvas.SetColorFill(TextColorGreen1);
-                    canvas.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "@" + student.Handle, handle_X, handle_Y, 0);
+                    stamp.Text = "@" + student.Handle;
+                    stamp.Position.Y-= stamp.FontSize; // Second line
+                    stamp.FontSize -= 10;
+                    StampText(canvas, stamp);
                 }
 
-                // Trainer
-                var trainer_Text = "Raúl González";
-                var trainer_handle = "rulasg";
-                var trainer_Y = 195;
-                var trainer_X = middle_y;
-                var trainer_fontSize = 16;
-                var trainer_Color = TextColorBlack;
+                // Trainer signature SECTION
+                stamp = new Stamp(
+                    "empty",
+                    new Position (0,0,0),
+                    0, // Font Size
+                    BaseFont.TIMES_BOLDITALIC,
+                    BaseColor.BLACK
+                );
 
-                canvas.SetFontAndSize(bfBold, trainer_fontSize);
-                canvas.SetColorFill(trainer_Color);
-                canvas.ShowTextAligned(PdfContentByte.ALIGN_CENTER, trainer_Text, trainer_X, trainer_Y, 0);
-
+                // Trainer Name
+                stamp.FontSize = 16;
+                stamp.Text = "Raul gonzalez";
+                stamp.Position = new Position(421.125f, 200f, 0f);
+                StampText(canvas,stamp);
 
                 // Handle Trainer
-                var trainer_handle_Y = trainer_Y - 12;
-                var trainer_handle_X = middle_y;
-                var trainer_handle_fontSize = 12;
-                var trainer_handle_Color = TextColorBlack;
+                stamp.Text = "@rulasg25";
+                stamp.Position.Y -= stamp.FontSize; // Second line
+                stamp.FontSize = 12;
+                StampText(canvas, stamp);
 
-                canvas.SetFontAndSize(bfBold, trainer_handle_fontSize);
-                canvas.SetColorFill(trainer_handle_Color);
-                
-                canvas.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "@" + trainer_handle, trainer_handle_X, trainer_handle_Y, 0);
 
                 //Close canvas
                 canvas.EndText();
@@ -148,4 +145,17 @@ public class PdfService
 
         return tempFile;
     }
+
+    void StampText(PdfContentByte canvas, Stamp stamp)
+    {
+        BaseFont bfName = BaseFont.CreateFont(stamp.FontName, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+        var color = new BaseColor(stamp.Color.R, stamp.Color.G, stamp.Color.B);
+
+
+        canvas.SetFontAndSize(bfName, stamp.FontSize);
+        canvas.SetColorFill(color);
+        
+        canvas.ShowTextAligned(PdfContentByte.ALIGN_CENTER, stamp.Text, stamp.Position.X, stamp.Position.Y, stamp.Position.Rotation);
+    }
 }
+
