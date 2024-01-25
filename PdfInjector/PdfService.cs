@@ -7,7 +7,7 @@ using Org.BouncyCastle.Crypto.Prng;
 
 public class PdfService
 {
-    public void InjectNameIntoPdf(Person student, string pdfPath, string pdfPathOutput)
+    public void InjectNameIntoPdf( DocInfo docInfo, string pdfPath, string pdfPathOutput)
     {
         string templateName = Path.GetFileNameWithoutExtension(pdfPath);
         Console.WriteLine("Template PDF: " + templateName);
@@ -17,10 +17,10 @@ public class PdfService
         switch (templateName)
         {
             case "solidify_certificate_v1":
-                tempFile = InjectNameV1(student, pdfPath);
+                tempFile = InjectNameV1(docInfo, pdfPath);
                 break;
             default:
-                tempFile = InjectNameDefault(student, pdfPath);
+                tempFile = InjectNameDefault(docInfo, pdfPath);
                 break;
         }
 
@@ -32,8 +32,9 @@ public class PdfService
         File.Move(tempFile, pdfPathOutput);
     }
 
-    string InjectNameDefault(Person student, string pdfPath)
+    string InjectNameDefault(DocInfo docInfo, string pdfPath)
     {
+        var student = docInfo.Student;
         int fontSize = 30;
         var TextColor1 = new BaseColor(64, 119, 142);
         BaseFont bfName = BaseFont.CreateFont(BaseFont.TIMES_ITALIC, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
@@ -74,12 +75,8 @@ public class PdfService
         return tempFile;
     }
 
-    string InjectNameV1(Person student, string pdfPath)
+    string InjectNameV1(DocInfo docInfo, string pdfPath)
     {
-
-        BaseFont bfName = BaseFont.CreateFont(BaseFont.TIMES_ITALIC, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-        BaseFont bfBold = BaseFont.CreateFont(BaseFont.TIMES_BOLDITALIC, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-
         string tempFile = Path.GetTempFileName();
 
         using (PdfReader reader = new PdfReader(pdfPath))
@@ -97,24 +94,40 @@ public class PdfService
                 // Paragraph 1 Base Stamp
                 var stamp = new Stamp(
                     "empty",
-                    new Position (297.75f,400,0),
+                    new Position (297.75f,380,0),
                     35, // Font Size
                     BaseFont.TIMES_ITALIC,
                     new BaseColor(64, 119, 142) // Green elegant
                 );
 
                 //Name
-                stamp.Text = student.Name;
+                var maxLength = "012345678901234567890123456789".Length;
+                var text = docInfo.Student.Name;
+                if (text.Length > maxLength)
+                {
+                    throw new ArgumentException($"Student name is longer than {maxLength} characters");
+                }
+
+                stamp.Text = text;
                 StampText(canvas, stamp);
 
-                //Handle
-                if(student.Handle != null)
-                {
-                    stamp.Text = "@" + student.Handle;
-                    stamp.Position.Y-= stamp.FontSize; // Second line
-                    stamp.FontSize -= 10;
-                    StampText(canvas, stamp);
-                }
+                //Handle and Company
+                stamp.Text = $"@{docInfo.Student.Handle} ({docInfo.Student.Company})";
+                stamp.FontSize -= 15;
+                stamp.Position.Y-= stamp.FontSize + 3; // Second line
+                StampText(canvas, stamp);
+
+                // Training Name
+                stamp.Color = BaseColor.DARK_GRAY;
+                stamp.Text = $"{docInfo.CourseName}";
+                stamp.Position.Y -= stamp.FontSize * 2; // Third line
+                StampText(canvas, stamp);
+
+                // Training Date
+                stamp.Text = $"{docInfo.CourseDate}";
+                stamp.FontSize -= 5;
+                stamp.Position.Y -= stamp.FontSize + 3; // Fourth line
+                StampText(canvas, stamp);
 
                 // Trainer signature SECTION
                 stamp = new Stamp(
@@ -137,6 +150,16 @@ public class PdfService
                 stamp.FontSize = 12;
                 StampText(canvas, stamp);
 
+                // GUID
+                stamp = new Stamp(
+                    docInfo.Id.ToString(),
+                    new Position (297.75f,0,0),
+                    6, // Font Size
+                    BaseFont.COURIER,
+                    BaseColor.BLACK
+                );
+                stamp.Position.Y = 12;
+                StampText(canvas, stamp);
 
                 //Close canvas
                 canvas.EndText();

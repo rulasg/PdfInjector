@@ -22,16 +22,38 @@ public class Program
         if (studentHandle == null) { Console.Error.WriteLine("Error: Student name cannot be null."); return; }
         if (pdfFilePath == null || !File.Exists(pdfFilePath)) { Console.Error.WriteLine("Error: PDF file path not found."); return; }
 
+        // Training info
+        var trainingName = "Training GitHub for Non-Developers";
+        var trainingDate = "December 2023";
+
         // create user
-        var student = StudentService.GetStudent(studentHandle);
-        var pdfService = new PdfService();
+        var student = new Person(){
+            Name = "Raul (Dibildos) Gonzalez",
+            Handle = "raulgeu",
+            Company = "BiT21"
+        };
+
+        // create trainer
+        var trainer = new Person(){
+            Name = "Raul (Dibildos) Gonzalez Rodriguez",
+            Handle = "rulasg",
+            Company = "Solidify"
+        };
 
         // Create pdfPathOutput
         var pdfPathOutput = Path.Combine(Path.GetDirectoryName(pdfFilePath), $"{Path.GetFileNameWithoutExtension(pdfFilePath)}_{student.Handle}{Path.GetExtension(pdfFilePath)}");
 
+        // Doc ID
+        var id = $"solidify_{ Guid.NewGuid().ToString()}";
+
+        var docInfo = new DocInfo(student,trainer,trainingName,trainingDate, id);
+
         try
         {
-            pdfService.InjectNameIntoPdf(student, pdfFilePath, pdfPathOutput);
+            var pdfService = new PdfService();
+
+            pdfService.InjectNameIntoPdf(docInfo, pdfFilePath, pdfPathOutput);
+
             Console.WriteLine("Name injected successfully into the PDF.");
         }
         catch (Exception ex)

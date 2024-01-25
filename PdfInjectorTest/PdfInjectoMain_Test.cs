@@ -12,6 +12,12 @@ namespace PdfInjectorTest
 
             var userHandle = "ghHandle";
             var pdfName = "Pdftemplate";
+            var outputFile = pdfName+"_"+ userHandle+".pdf";
+
+            if (File.Exists(outputFile))
+            {
+                File.Delete(outputFile);
+            }
 
             // Arrange
             // string[] args = new string[] { "userName", "/Users/rulasg/code/PdfInjector/README.pdf" };
@@ -27,7 +33,6 @@ namespace PdfInjectorTest
             Assert.Contains("Name injected successfully into the PDF.", output);
 
             var userNameNormalized = userHandle.Replace(" ", "_");
-            var outputFile = pdfName+"_"+ userHandle+".pdf";
             Assert.True(File.Exists(outputFile));
         }
     }
