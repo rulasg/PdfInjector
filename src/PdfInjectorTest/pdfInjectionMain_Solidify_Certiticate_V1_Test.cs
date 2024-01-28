@@ -10,7 +10,9 @@ namespace PdfInjectorTest
         public void Test_solidify_certificate_v1_SUCCESS()
         {
         //    var pdftemplate= "/Users/rulasg/code/PdfInjector/README.pdf" ;
-           var pdftemplate= "solidify_certificate_v1.pdf";
+        //    var pdftemplate= "solidify_certificate_v1.pdf";
+           var pdftemplate= "Pdftemplate.pdf";
+           
            var result = "result_V1.pdf";
 
             // Arrange
@@ -36,10 +38,10 @@ namespace PdfInjectorTest
             PdfInjector.Program.Main(args);
 
             // Assert
+            Assert.True(File.Exists(result));
+            
             string output = stringWriter.ToString();
             Assert.Contains("Name injected successfully into the PDF.", output);
-
-            Assert.True(File.Exists(result));
         }
     }
 }
