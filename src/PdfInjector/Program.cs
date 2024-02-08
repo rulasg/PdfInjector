@@ -139,7 +139,7 @@ public class Program
         Console.WriteLine("Args:");
         Console.WriteLine("    --help | -h      | -?   : Prints this help message");
         Console.WriteLine();
-        Console.WriteLine("    --stampname      | -s   : Stamp name (e.g. 'solidify_training_v1')");
+        Console.WriteLine("    --stampname      | -s   : Stamp name (e.g. 'solidify_training_v2')");
         Console.WriteLine("    --pdftemplate    | -t   : Path to the PDF template");
         Console.WriteLine("    --pdfoutput      | -o   : Path to the output PDF file");
         Console.WriteLine();
