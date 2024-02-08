@@ -42,6 +42,10 @@ namespace PdfInjectorTest
             
             string output = stringWriter.ToString();
             Assert.Contains("Name injected successfully into the PDF.", output);
+
+            // Clean
+            stringWriter.Close();
+            File.Delete(result);
         }
     }
 }
