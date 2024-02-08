@@ -14,7 +14,8 @@ public class Person
     }
 
     public bool Test(){
-        if (Name == "" || Handle == "" || Company == "")
+        // if (Name == "" || Handle == "" || Company == "")
+        if (Name == "")
         {
             return false;
         }
